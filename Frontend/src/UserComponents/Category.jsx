@@ -12,13 +12,12 @@ const categoryMap = {
   foodProducts: "food",
   sportsProducts: "sports",
 };
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const Category = () => {
   const location = useLocation();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
   const [currentCategory, setCurrentCategory] = useState("");
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const params = new URLSearchParams(location.search);
   const categoryKey = params.get("cat");
@@ -32,12 +31,14 @@ const Category = () => {
     }
 
     setCurrentCategory(category);
+    
 
     fetch(`${apiUrl}/api/products/${category}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
         setError("");
+        console.log(`${apiUrl}/api/products/${category}`)
       })
       .catch((err) => {
         setError("Failed to fetch products.");
@@ -100,7 +101,7 @@ function addToCart(id, name, price, image) {
     return;
   }
 
-  fetch("http://localhost:5000/api/cart/add", {
+  fetch(`${apiUrl}/api/cart/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
