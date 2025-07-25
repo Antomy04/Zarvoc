@@ -10,6 +10,7 @@ const SellerDashboard = () => {
   const [sellerId, setSellerId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showPricingAssistant, setShowPricingAssistant] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     // Get seller ID from localStorage or authentication context
@@ -32,7 +33,7 @@ const SellerDashboard = () => {
       console.log('🔍 Fetching products for seller:', currentSellerId);
       
       // Fetch products for the specific seller
-      const response = await fetch(`http://localhost:5000/api/products/seller/${currentSellerId}`);
+      const response = await fetch(`${apiUrl}/api/products/seller/${currentSellerId}`);
       console.log('📡 Response status:', response.status);
       
       if (response.ok) {
@@ -99,7 +100,7 @@ const SellerDashboard = () => {
 
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+        const response = await fetch(`${apiUrl}/api/products/${productId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

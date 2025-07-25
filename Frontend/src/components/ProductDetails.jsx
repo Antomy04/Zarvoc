@@ -28,6 +28,7 @@ const categories = [
   const [products, setProducts] = useState([]);
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const requiredFields = [
     'product-name', 'product-category', 'product-description', 'product-amount', 'product-price'
@@ -66,7 +67,7 @@ const categories = [
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/products', {
+      const response = await fetch(`${apiUrl}/api/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productData)

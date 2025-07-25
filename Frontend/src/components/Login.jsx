@@ -10,6 +10,7 @@ const Login = () => {
   const [signinError, setSigninError] = useState('');
   const [signupError, setSignupError] = useState('');
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [signinData, setSigninData] = useState({ email: '', password: '' });
   const [signupData, setSignupData] = useState({
@@ -41,7 +42,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/signup', {
+      const res = await axios.post(`${apiUrl}/signup`, {
         email: signupData.email,
         password: signupData.password
       });
@@ -70,7 +71,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/signin', {
+      const res = await axios.post(`${apiUrl}/signin`, {
         email: signinData.email,
         password: signinData.password
       });

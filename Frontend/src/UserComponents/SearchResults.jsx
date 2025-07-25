@@ -7,6 +7,7 @@ const SearchResults = () => {
   const location = useLocation();
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const params = new URLSearchParams(location.search);
   const query = params.get("q");
@@ -16,7 +17,7 @@ const SearchResults = () => {
       setError("No search query provided.");
       return;
     }
-    fetch(`http://localhost:5000/api/products/search?q=${encodeURIComponent(query)}`)
+    fetch(`${apiUrl}/api/products/search?q=${encodeURIComponent(query)}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -33,7 +34,7 @@ const SearchResults = () => {
       return;
     }
 
-    fetch("http://localhost:5000/api/cart/add", {
+    fetch(`${apiUrl}/api/cart/add`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

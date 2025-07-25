@@ -18,6 +18,7 @@ const Category = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
   const [currentCategory, setCurrentCategory] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const params = new URLSearchParams(location.search);
   const categoryKey = params.get("cat");
@@ -32,7 +33,7 @@ const Category = () => {
 
     setCurrentCategory(category);
 
-    fetch(`http://localhost:5000/api/products/${category}`)
+    fetch(`${apiUrl}/api/products/${category}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);

@@ -21,11 +21,12 @@ const Header = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem('userId');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // Fetch notifications from backend
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notifications');
+      const response = await fetch(`${apiUrl}/api/notifications`);
       if (response.ok) {
         const data = await response.json();
         setNotifications(data);
@@ -40,7 +41,7 @@ const Header = () => {
   // Mark notification as read
   const markAsRead = async (notificationId) => {
     try {
-      await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      await fetch(`${apiUrl}/api/notifications/${notificationId}/read`, {
         method: 'PUT'
       });
       setNotifications(prev => 
@@ -57,7 +58,7 @@ const Header = () => {
   // Clear all notifications
   const clearAllNotifications = async () => {
     try {
-      await fetch('http://localhost:5000/api/notifications/clear', {
+      await fetch(`${apiUrl}/api/notifications/clear`, {
         method: 'DELETE'
       });
       setNotifications([]);

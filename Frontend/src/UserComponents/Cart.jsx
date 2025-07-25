@@ -9,6 +9,7 @@ const Cart = () => {
   const [subtotal, setSubtotal] = useState(0);
   const [itemCount, setItemCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   const fetchCart = async () => {
@@ -20,7 +21,7 @@ const Cart = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/cart/${userId}`);
+      const res = await fetch(`${apiUrl}/api/cart/${userId}`);
       const items = await res.json();
       setCartItems(items || []);
       setLoading(false);
@@ -51,7 +52,7 @@ const Cart = () => {
 
     const newQty = Math.max(1, item.qty + delta);
     try {
-      await fetch(`http://localhost:5000/api/cart/update`, {
+      await fetch(`${apiUrl}/api/cart/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, itemId: id, qty: newQty }),
@@ -68,7 +69,7 @@ const Cart = () => {
   const deleteItem = async (id) => {
     const userId = localStorage.getItem("userId");
     try {
-      await fetch(`http://localhost:5000/api/cart/remove`, {
+      await fetch(`${apiUrl}/api/cart/remove`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, itemId: id }),

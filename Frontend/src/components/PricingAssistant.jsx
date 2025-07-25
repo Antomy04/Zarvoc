@@ -5,6 +5,7 @@ const PricingAssistant = ({ product, onClose, onPriceUpdate }) => {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [competitors, setCompetitors] = useState([]);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (product) {
@@ -16,7 +17,7 @@ const PricingAssistant = ({ product, onClose, onPriceUpdate }) => {
     setLoading(true);
     try {
       // Fetch competitor products
-      const response = await fetch(`http://localhost:5000/api/products/analyze-pricing`, {
+      const response = await fetch(`${apiUrl}/api/products/analyze-pricing`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,7 +112,7 @@ const PricingAssistant = ({ product, onClose, onPriceUpdate }) => {
     if (window.confirm(confirmMessage)) {
       try {
         // Update product price in database
-        const response = await fetch(`http://localhost:5000/api/products/${product._id}`, {
+        const response = await fetch(`${apiUrl}/api/products/${product._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

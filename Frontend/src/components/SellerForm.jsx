@@ -7,6 +7,7 @@ const SellerForm = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('seller-info');
   const [imagePreview, setImagePreview] = useState(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     shopName: '',
     category: '',
@@ -58,7 +59,7 @@ const categories = [
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/sellers', {
+      const response = await fetch(`${apiUrl}/api/sellers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

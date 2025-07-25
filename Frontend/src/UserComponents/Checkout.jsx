@@ -24,6 +24,7 @@ const Checkout = () => {
   const [upiVerified, setUpiVerified] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const apiUrl = import.meta.env.VITE_API_URL;
   
   const navigate = useNavigate();
 
@@ -44,13 +45,13 @@ const Checkout = () => {
       
       try {
         // Fetch cart items
-        const res = await fetch(`http://localhost:5000/api/cart/${userId}`);
+        const res = await fetch(`${apiUrl}/api/cart/${userId}`);
         if (!res.ok) throw new Error('Failed to fetch cart');
         const items = await res.json();
         setCartItems(items || []);
         
         // Fetch user data
-        const userRes = await fetch(`http://localhost:5000/user/${userId}`);
+        const userRes = await fetch(`${apiUrl}/user/${userId}`);
         if (userRes.ok) {
           const userData = await userRes.json();
           setUserName(userData.name || 'User');
@@ -145,7 +146,7 @@ const Checkout = () => {
         // Simulate payment success
         const simulatedPaymentId = `razorpay_${Date.now()}`;
         
-        const res = await fetch('http://localhost:5000/api/orders/place', {
+        const res = await fetch(`${apiUrl}/api/orders/place`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -162,7 +163,7 @@ const Checkout = () => {
         const data = await res.json();
         if (data.success) {
           // Clear cart after successful order
-          await fetch(`http://localhost:5000/api/cart/${userId}`, { method: 'DELETE' });
+          await fetch(`${apiUrl}/api/cart/${userId}`, { method: 'DELETE' });
           navigate('/confirmation', { state: { order: data.order } });
         } else {
           setError('Failed to place order.');
