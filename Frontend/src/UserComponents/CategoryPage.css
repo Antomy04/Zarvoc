@@ -1,0 +1,42 @@
+/* CategoryPage.css */
+
+.category-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.category-main {
+  background-color: #f9fafb;
+  padding: 2rem 0;
+}
+
+.category-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 0.5rem;
+}
+
+/* Responsive design */
+@media (min-width: 640px) {
+  .category-container {
+    padding: 0 0.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .category-container {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .category-container {
+    padding: 0 1.25rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .category-container {
+    padding: 0 1.5rem;
+  }
+}

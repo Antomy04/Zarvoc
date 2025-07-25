@@ -1,0 +1,36 @@
+Goal for Day 16:
+🔐 Make your login/signup actually work using backend + database.
+
+
+🧩 Plan for Today
+✅ Step 1: Set up Backend (Node.js + Express)
+Create a simple server.
+
+Setup routes for:
+
+POST /signup
+
+POST /signin
+
+✅ Step 2: Connect to MongoDB
+Store registered users securely.
+
+✅ Step 3: Hash Passwords using bcrypt
+Never store raw passwords, always hash them.
+
+✅ Step 4: Add Validation
+Check for empty fields, valid email, etc.
+
+✅ Step 5: Connect frontend to backend using Fetch/Axios
+Send form data from frontend to backend.
+
+🛠️ Tools You Need
+Backend: Node.js + Express
+
+Database: MongoDB (local or Atlas)
+
+Password Security: bcrypt
+
+Communication: Axios or Fetch API
+
+Dev tools: Postman (for testing backend APIs)

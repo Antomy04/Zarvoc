@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="auth-section">
+            <h1>Welcome!</h1>
+            <div class="tab-buttons">
+                <button id="signup-tab" class="tab-button">Sign Up</button>
+                <button id="signin-tab" class="tab-button active">Sign In</button>
+            </div>
+            <div id="signin-form-section" class="form-section active">
+                <form id="signin-form">
+                    <div class="form-group">
+                        <label for="signin-email">Email or Mobile Number</label>
+                        <input type="text" id="signin-email" name="email" class="form-input" placeholder="Enter your email or mobile number">
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password">Password</label>
+                        <input type="password" id="signin-password" name="password" class="form-input" placeholder="Enter your password">
+                        <label style="font-size: 0.9em;">
+                            <input type="checkbox" id="signin-show-password"> Show Password
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <div id="signin-error" style="color:red; font-size:0.9em;"></div>
+                </form>
+            </div>
+            <div id="signup-form-section" class="form-section">
+                <form id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-email">Email or Mobile Number</label>
+                        <input type="text" id="signup-email" name="email" class="form-input" placeholder="Enter your email or mobile number">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Set Password</label>
+                        <input type="password" id="signup-password" name="password" class="form-input" placeholder="Set your password">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm_password" class="form-input" placeholder="Confirm your password">
+                        <label style="font-size: 0.9em;">
+                            <input type="checkbox" id="signup-show-password"> Show Password
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <div id="signup-error" style="color:red; font-size:0.9em;"></div>
+                </form>
+            </div>
+        </div>
+        <div class="banner-section">
+            <div class="banner-content">
+                <h2>Your Journey Starts Here!</h2>
+                <p>Sign in or sign up to explore amazing products and exclusive offers.</p>
+                <img src="https://placehold.co/350x200/007bff/ffffff?text=Great+Deals+Await!" alt="E-commerce promotional banner" class="banner-image">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle tabs
+        function toggleAuthForms(active) {
+            document.getElementById('signup-tab').classList.toggle('active', active === 'signup');
+            document.getElementById('signin-tab').classList.toggle('active', active === 'signin');
+            document.getElementById('signup-form-section').classList.toggle('active', active === 'signup');
+            document.getElementById('signin-form-section').classList.toggle('active', active === 'signin');
+        }
+
+        document.getElementById('signup-tab').onclick = () => toggleAuthForms('signup');
+        document.getElementById('signin-tab').onclick = () => toggleAuthForms('signin');
+
+        // Show password toggle
+        document.getElementById('signin-show-password').onchange = e => {
+            document.getElementById('signin-password').type = e.target.checked ? 'text' : 'password';
+        };
+        document.getElementById('signup-show-password').onchange = e => {
+            const type = e.target.checked ? 'text' : 'password';
+            document.getElementById('signup-password').type = type;
+            document.getElementById('confirm-password').type = type;
+        };
+
+        function isValidEmailOrMobile(input) {
+            return /^[\w\.-]+@[\w\.-]+\.\w{2,}$/.test(input) || /^\d{10}$/.test(input);
+        }
+
+        document.getElementById('signup-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('confirm-password').value;
+            const errorDiv = document.getElementById('signup-error');
+            errorDiv.textContent = '';
+
+            if (!isValidEmailOrMobile(email)) return errorDiv.textContent = 'Invalid email or mobile number';
+            if (password.length < 6) return errorDiv.textContent = 'Password must be at least 6 characters';
+            if (password !== confirm) return errorDiv.textContent = 'Passwords do not match';
+
+            const res = await fetch('http://localhost:5000/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+            alert(data.msg);
+            if (res.ok) toggleAuthForms('signin');
+        });
+
+        document.getElementById('signin-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const email = document.getElementById('signin-email').value.trim();
+            const password = document.getElementById('signin-password').value;
+            const errorDiv = document.getElementById('signin-error');
+            errorDiv.textContent = '';
+
+            if (!isValidEmailOrMobile(email)) return errorDiv.textContent = 'Invalid email or mobile number';
+            if (password.length < 6) return errorDiv.textContent = 'Password must be at least 6 characters';
+
+            const res = await fetch('http://localhost:5000/signin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+            if (!res.ok) return errorDiv.textContent = data.msg || 'Login failed';
+            localStorage.setItem('userId', data.userId);
+            window.location.href = 'userpage.html';
+        });
+    </script>
+</body>
+</html>
