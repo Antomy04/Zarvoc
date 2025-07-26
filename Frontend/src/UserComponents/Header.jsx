@@ -222,7 +222,7 @@ const Header = () => {
                   <button
                     title="Notifications"
                     onClick={() => setShowNotifications(!showNotifications)}
-                    className="p-2 rounded-full bg-gradient-to-r text-white from-black-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 relative"
+                    className="p-2 rounded-full bg-black text-white from-black-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 relative"
                   >
                     <BellIcon className="h-6 w-6" />
                     {unreadCount > 0 && (
