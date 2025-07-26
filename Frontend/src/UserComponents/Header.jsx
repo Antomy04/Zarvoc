@@ -309,7 +309,7 @@ const Header = () => {
             >
               <Bars3Icon className="h-6 w-6 cursor-pointer hover:text-cyan-400" />
               {activeDropdown === 'menu' && (
-                <ul className="absolute top-full left-0 mt-2 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10 min-w-32 p-2 text-sm">
+                <ul className="absolute top-full left-0 mt-2 bg-white border border-gray-700 rounded-md shadow-lg z-10 min-w-32 p-2 text-sm">
                   <li><a href="/" className="block px-3 py-1 hover:text-cyan-400 flex items-center"><HomeIcon className="h-4 w-4 mr-1" /> Home</a></li>
                   <li><a href="/about" className="block px-3 py-1 hover:text-cyan-400 flex items-center"><UserGroupIcon className="h-4 w-4 mr-1" /> About</a></li>
                   <li><a href="/contact.html" className="block px-3 py-1 hover:text-cyan-400 flex items-center"><PhoneIcon className="h-4 w-4 mr-1" /> Contact</a></li>
