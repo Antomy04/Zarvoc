@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Zarvoc E-commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary: #8a2be2;
+            --secondary: #9370db;
+            --bg-night: #0f0c29; /* Deep space blue */
+            --bg-day: #f0f8ff; /* Light background */
+            --card-bg-night: rgba(30, 30, 60, 0.7);
+            --card-bg-day: rgba(255, 255, 255, 0.9);
+            --text-night: #e6e6fa;
+            --text-day: #333333;
+            --error: #ff6b6b;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-attachment: fixed;
+            color: var(--text-night);
+        }
+
+        .form-section-night {
+            background: var(--card-bg-night);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .falling-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        .night-mode .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(138, 43, 226, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid var(--primary);
+        }
+        
+        .error {
+            border-color: var(--error) !important;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .success-message {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid #2ecc71;
+            color: #d1fae5;
+        }
+        
+        .show-success {
+            opacity: 1;
+        }
+        
+        .rating-container {
+            display: none;
+            margin-top: 1rem;
+        }
+        
+        .star-rating {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .star-rating:hover,
+        .star-rating.active {
+            color: #ffd700;
+            transform: scale(1.2);
+        }
+        
+        .rating-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-night);
+        }
+        
+        .map-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: rgba(15, 12, 41, 0.7);
+            border-radius: 0.5rem;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .night-input {
+            background-color: rgba(30, 30, 60, 0.7);
+            color: var(--text-night);
+            border: 1px solid #302b63;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.3);
+            outline: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #8a2be2, #6a0dad);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(138, 43, 226, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(138, 43, 226, 0); }
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.5);
+            animation: none;
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: shooting 5s infinite;
+            opacity: 0;
+        }
+        
+        @keyframes shooting {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100vw) translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        .big-shooting-star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: big-shooting 3s infinite;
+            opacity: 0;
+        }
+        
+        @keyframes big-shooting {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100vw) translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        .theme-btn-night {
+            background-color: #8a2be2;
+            color: white;
+        }
+        
+        .theme-btn-day {
+            background-color: #ffd700;
+            color: #333;
+        }
+        
+        .night-label {
+            color: var(--text-night);
+        }
+        
+        .day-label {
+            color: var(--text-day);
+        }
+        
+        .night-text {
+            color: var(--text-night);
+        }
+        
+        .day-text {
+            color: var(--text-day);
+        }
+    </style>
+</head>
+<body class="night-mode">
+    <!-- Shooting stars background -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Navigation Header -->
+    <nav class="bg-gray-900 bg-opacity-80 backdrop-blur-sm border-b border-purple-900 border-opacity-50 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center space-x-2">
+                    <img src="/Zarvoc.png" alt="Zarvoc Logo" class="h-10">
+                    <span class="text-2xl font-bold text-purple-200">Zarvoc</span>
+                </a>
+                <div class="flex space-x-6">
+                    <a href="/" class="text-purple-200 hover:text-white transition duration-300">Home</a>
+                    <a href="/about" class="text-purple-200 hover:text-white transition duration-300">About</a>
+                    <a href="/contact.html" class="text-purple-200 hover:text-white transition duration-300">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Contact Form Container -->
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
+        <!-- Logo Section -->
+        <div class="text-center mb-6">
+            <img src="/Zarvoc.png" alt="Zarvoc Logo" class="h-16 mx-auto mb-4">
+        </div>
+        
+        <h1 class="text-4xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
+            Contact Zarvoc
+        </h1>
+        <p class="text-center mb-12 max-w-2xl mx-auto night-text">
+            Have questions or feedback? We'd love to hear from you! Fill out the form below and our team will get back to you soon.
+        </p>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <!-- Form Section -->
+            <div class="form-section-night p-8 rounded-lg shadow-xl">
+                <form id="contactForm" method="POST" class="space-y-6">
+                    <!-- Name Field -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium mb-2 night-label">Full Name *</label>
+                        <input type="text" id="name" name="name" required 
+                            class="w-full px-4 py-3 rounded-md focus:ring-2 focus:ring-purple-500 outline-none transition night-input">
+                        <p id="name-error" class="error-message">Please enter your name</p>
+                    </div>
+                    
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium mb-2 night-label">Email Address *</label>
+                        <input type="email" id="email" name="email" required 
+                            class="w-full px-4 py-3 rounded-md focus:ring-2 focus:ring-purple-500 outline-none transition night-input">
+                        <p id="email-error" class="error-message">Please enter a valid email</p>
+                    </div>
+                    
+                    <!-- Phone Field -->
+                    <div>
+                        <label for="phone" class="block text-sm font-medium mb-2 night-label">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required 
+                            class="w-full px-4 py-3 rounded-md focus:ring-2 focus:ring-purple-500 outline-none transition night-input">
+                        <p id="phone-error" class="error-message">Please enter a valid phone number</p>
+                    </div>
+                    
+                    <!-- Issue Type Dropdown -->
+                    <div>
+                        <label for="problem" class="block text-sm font-medium mb-2 night-label">What can we help you with? *</label>
+                        <select id="problem" name="problem" required 
+                            class="w-full px-4 py-3 rounded-md focus:ring-2 focus:ring-purple-500 outline-none transition night-input">
+                            <option value="" disabled selected>Select an option</option>
+                            <option value="Order Issue">Order Issue</option>
+                            <option value="Product Question">Product Question</option>
+                            <option value="Return/Exchange">Return/Exchange</option>
+                            <option value="Payment Problem">Payment Problem</option>
+                            <option value="Feedback">Feedback</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <p id="problem-error" class="error-message">Please select an option</p>
+                    </div>
+                    
+                    <!-- Rating Section -->
+                    <div id="ratingContainer" class="rating-container">
+                        <div class="mb-4">
+                            <label class="rating-label night-label">Overall Rating:</label>
+                            <div class="flex space-x-2">
+                                <span class="star-rating" data-question="quality" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="rating-label night-label">Product Quality:</label>
+                            <div class="flex space-x-2">
+                                <span class="star-rating" data-question="quality" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="quality" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="rating-label night-label">Customer Service:</label>
+                            <div class="flex space-x-2">
+                                <span class="star-rating" data-question="service" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="service" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="service" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="service" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="service" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="rating-label night-label">Delivery Speed:</label>
+                            <div class="flex space-x-2">
+                                <span class="star-rating" data-question="delivery" data-value="1"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="delivery" data-value="2"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="delivery" data-value="3"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="delivery" data-value="4"><i class="far fa-star"></i></span>
+                                <span class="star-rating" data-question="delivery" data-value="5"><i class="far fa-star"></i></span>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="quality-rating" name="quality_rating" value="0">
+                        <input type="hidden" id="service-rating" name="service_rating" value="0">
+                        <input type="hidden" id="delivery-rating" name="delivery_rating" value="0">
+                        <!-- <input type="text" id="overall-rating" name="overall_rating" value="0" readonly class="w-full px-4 py-3 rounded-md bg-gray-200" disabled> -->
+                        
+                        <p id="rating-error" class="error-message mt-1">Please rate all categories</p>
+                    </div>
+                    
+                    <div>
+                        <label for="address" class="block text-sm font-medium mb-2 night-label">Address *</label>
+                        <input type="text" id="address" name="address" required 
+                            class="w-full px-4 py-3 rounded-md focus:ring-2 focus:ring-purple-500 outline-none transition night-input">
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-sm font-medium mb-2 night-label">Your Message *</label>
+                        <textarea id="message" name="message" rows="5" required 
+                            class="w-full px-4 py-3 rounded-md focus:ring-2 focus:ring-purple-500 outline-none transition night-input"></textarea>
+                        <p id="message-error" class="error-message">Please enter your message</p>
+                    </div>
+                    <input type="hidden" name="access_key" value="27f1a740-eea8-4ad9-a729-d316b59775d3" >
+                    <button type="submit" id="submitBtn" 
+                        class="w-full py-3 px-6 rounded-full btn-primary flex items-center justify-center">
+                        <span id="submitText">Submit</span>
+                        <div id="spinner" class="spinner ml-2 hidden"></div>
+                    </button>
+                </form>
+                
+                <div id="successMessage" class="mt-4 p-4 rounded-lg success-message">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle mr-3 text-2xl text-green-300"></i>
+                        <div>
+                            <p class="font-medium">Your form has been submitted successfully!</p>
+                            <p class="text-sm opacity-80">We'll get back to you soon.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Map Section -->
+            <div>
+                <div class="mb-4 sticky top-4">
+                    <h2 class="text-xl font-bold mb-2 night-label">Set Your Location</h2>
+                    <p class="text-gray-600 mb-4">Drag the marker to your exact delivery location or click on the map to set it.</p>
+                    <div id="map"></div>
+                    <div class="mt-2 text-sm text-gray-500" id="coordinates">Latitude: 0, Longitude: 0</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="border-t border-purple-900 border-opacity-50 pt-8 mt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold text-purple-200">Zarvoc E-commerce</h2>
+                    <p class="text-purple-100 ">Your trusted shopping destination</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-purple-300 hover:text-white transition">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-purple-300 hover:text-white transition">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-purple-300 hover:text-white transition">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-purple-300 hover:text-white transition">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-6 text-center text-sm text-purple-300">
+                &copy; 2025-2027 Zarvoc E-commerce Platform. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggle" class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-purple-700 shadow-lg flex items-center justify-center text-white z-50">
+        <i class="fas fa-moon text-xl"></i>
+    </button>
+
+    <!-- Leaflet.js -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([20.5937, 78.9629], 5); // Default to India
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Add a marker
+        const marker = L.marker([20.5937, 78.9629]).addTo(map);
+
+        // Update marker position on map click
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            document.getElementById('coordinates').innerText = `Latitude: ${e.latlng.lat.toFixed(5)}, Longitude: ${e.latlng.lng.toFixed(5)}`;
+            document.getElementById('address').value = `Lat: ${e.latlng.lat.toFixed(5)}, Lng: ${e.latlng.lng.toFixed(5)}`;
+        });
+
+        // Get user's current location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                map.setView(userLocation, 13);
+                marker.setLatLng(userLocation);
+                document.getElementById('coordinates').innerText = `Latitude: ${userLocation.lat}, Longitude: ${userLocation.lng}`;
+                document.getElementById('address').value = `Lat: ${userLocation.lat}, Lng: ${userLocation.lng}`;
+            });
+        }
+
+        // Show rating section when feedback is selected
+        document.getElementById('problem').addEventListener('change', function() {
+            const ratingContainer = document.getElementById('ratingContainer');
+            if (this.value === 'Feedback') {
+                ratingContainer.style.display = 'block';
+            } else {
+                ratingContainer.style.display = 'none';
+            }
+        });
+
+        // Original JavaScript functionality for form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            // Form validation
+            let isValid = true;
+            const requiredFields = ['name', 'email', 'phone', 'problem', 'message'];
+            requiredFields.forEach(field => {
+                const input = document.getElementById(field);
+                if (!input.value) {
+                    isValid = false;
+                    input.classList.add('error');
+                    document.getElementById(`${field}-error`).style.display = 'block';
+                } else {
+                    input.classList.remove('error');
+                    document.getElementById(`${field}-error`).style.display = 'none';
+                }
+            });
+
+            // Check if feedback ratings are filled
+            if (document.getElementById('problem').value === 'Feedback') {
+                const ratings = ['quality', 'service', 'delivery'];
+                let totalRating = 0;
+                let count = 0;
+                ratings.forEach(rating => {
+                    const value = document.getElementById(`${rating}-rating`).value;
+                    if (value === '0') {
+                        isValid = false;
+                        document.getElementById('rating-error').style.display = 'block';
+                    } else {
+                        totalRating += parseInt(value);
+                        count++;
+                        document.getElementById('rating-error').style.display = 'none';
+                    }
+                });
+                if (count > 0) {
+                    const averageRating = (totalRating / count).toFixed(1);
+                    document.getElementById('overall-rating').value = averageRating;
+                }
+            }
+
+            if (isValid) {
+                document.getElementById('spinner').classList.remove('hidden');
+                document.getElementById('submitText').innerText = 'Submitting...';
+
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    problem: document.getElementById('problem').value,
+                    quality_rating: document.getElementById('quality-rating').value,
+                    service_rating: document.getElementById('service-rating').value,
+                    delivery_rating: document.getElementById('delivery-rating').value,
+                    address: document.getElementById('address').value,
+                    message: document.getElementById('message').value
+                };
+
+                try {
+                    const res = await fetch('http://localhost:5000/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        document.getElementById('successMessage').classList.add('show-success');
+                        this.reset();
+                    } else {
+                        alert(data.msg || 'Submission failed.');
+                    }
+                } catch (err) {
+                    alert('Server error. Please try again.');
+                }
+                document.getElementById('spinner').classList.add('hidden');
+                document.getElementById('submitText').innerText = 'Submit';
+            }
+        });
+
+        // Star rating functionality
+        const starRatings = document.querySelectorAll('.star-rating');
+        starRatings.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const question = this.dataset.question;
+                const value = this.dataset.value;
+                starRatings.forEach(s => {
+                    if (s.dataset.question === question) {
+                        s.classList.remove('active');
+                    }
+                });
+                for (let i = 0; i < value; i++) {
+                    starRatings[i].classList.add('active');
+                }
+            });
+
+            star.addEventListener('click', function() {
+                const question = this.dataset.question;
+                const value = this.dataset.value;
+                document.getElementById(`${question}-rating`).value = value;
+                starRatings.forEach(s => {
+                    if (s.dataset.question === question) {
+                        s.classList.remove('active');
+                    }
+                });
+                for (let i = 0; i < value; i++) {
+                    starRatings[i].classList.add('active');
+                }
+                // Update overall rating
+                const quality = parseInt(document.getElementById('quality-rating').value);
+                const service = parseInt(document.getElementById('service-rating').value);
+                const delivery = parseInt(document.getElementById('delivery-rating').value);
+                const overall = (quality + service + delivery) / 3;
+                document.getElementById('overall-rating').value = overall.toFixed(1);
+            });
+
+            star.addEventListener('mouseout', function() {
+                const question = this.dataset.question;
+                const value = document.getElementById(`${question}-rating`).value;
+                starRatings.forEach(s => {
+                    if (s.dataset.question === question) {
+                        s.classList.remove('active');
+                    }
+                });
+                for (let i = 0; i < value; i++) {
+                    starRatings[i].classList.add('active');
+                }
+            });
+        });
+
+        // Create shooting stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('falling-star');
+                
+                // Random properties for each star
+                const size = Math.random() * 3;
+                const xPos = Math.random() * 100;
+                const duration = 2 + Math.random() * 5 + 's';
+                const delay = Math.random() * 5 + 's';
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${xPos}%`;
+                star.style.animationDuration = duration;
+                star.style.animationDelay = delay;
+                
+                starsContainer.appendChild(star);
+            }
+
+            // Create big shooting stars
+            const bigStarCount = 5; // Number of big shooting stars
+            for (let i = 0; i < bigStarCount; i++) {
+                const bigStar = document.createElement('div');
+                bigStar.classList.add('big-shooting-star');
+                
+                // Random properties for each big star
+                const xPos = Math.random() * 100;
+                const duration = 5 + Math.random() * 5 + 's';
+                const delay = Math.random() * 5 + 's';
+                
+                bigStar.style.left = `${xPos}%`;
+                bigStar.style.animationDuration = duration;
+                bigStar.style.animationDelay = delay;
+                
+                starsContainer.appendChild(bigStar);
+            }
+        }
+
+        // Create stars on load
+        window.onload = createStars;
+    </script>
+</body>
+</html>
