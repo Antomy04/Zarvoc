@@ -23,9 +23,13 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// app.use(cors({
+//   origin: ['http://localhost:3000', 'https://zarvoc.onrender.com'],
+//   credentials: false // if you're using cookies/auth
+// }));
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://zarvoc.onrender.com'],
-  credentials: false // if you're using cookies/auth
+  origin: "https://zarvoc.netlify.app",
+  credentials: true
 }));
 
 app.use(express.json());

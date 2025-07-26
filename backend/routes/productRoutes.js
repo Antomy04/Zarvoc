@@ -47,7 +47,7 @@ router.get('/:category', async (req, res) => {
     // Case-insensitive and partial match for category
     const products = await Product.find({ category: { $regex: req.params.category, $options: 'i' } });
     console.log('Found products:', products.length);
-    console.log(product)
+    console.log(products)
     res.json(products);
   } catch (err) {
     console.error('Error fetching products by category:', err);
