@@ -286,7 +286,7 @@ const Header = () => {
             <button
               title="Cart"
               onClick={handleCartClick}
-              className="p-2 rounded-full bg-gradient-to-r text-white from-black-500 to-teal-600 hover:from-green-600 hover:to-teal-700"
+              className="p-2 rounded-full bg-gradient-to-r text-black from-black-500 to-teal-600 hover:from-green-600 hover:to-teal-700"
             >
               <ShoppingCartIcon className="h-6 w-6" />
             </button>
