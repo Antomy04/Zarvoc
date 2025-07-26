@@ -205,7 +205,7 @@ const Header = () => {
               <button
                 title="Login"
                 onClick={() => navigate('/Login')}
-                className="p-2 rounded-full bg-gradient-to-r text-white from-black-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                className="p-2 rounded-full bg-black text-white from-black-600 to-indigo-600"
               >
                 <ArrowLeftOnRectangleIcon className="h-6 w-6" />
               </button>
@@ -214,7 +214,7 @@ const Header = () => {
               <button
                 title="Logout"
                 onClick={handleLogout}
-                className="p-2 rounded-full bg-gradient-to-r text-white from-black-600 to-pink-600 hover:from-red-700 hover:to-pink-700"
+                className="p-2 rounded-full bg-black text-white from-black-600 to-pink-600"
               >
                 <ArrowRightOnRectangleIcon className="h-6 w-6" />
               </button>
@@ -286,7 +286,7 @@ const Header = () => {
             <button
               title="Cart"
               onClick={handleCartClick}
-              className="p-2 rounded-full bg-gradient-to-r text-black from-black-500 to-teal-600 hover:from-green-600 hover:to-teal-700"
+              className="p-2 rounded-full bg-black text-white from-black-500 to-teal-600 "
             >
               <ShoppingCartIcon className="h-6 w-6" />
             </button>
