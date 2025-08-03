@@ -296,38 +296,51 @@ const Category = () => {
               <div
                 key={product._id}
                 className={`bg-white rounded-2xl shadow-sm overflow-hidden group transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${
-                  viewMode === "list" ? "flex" : ""
+                  viewMode === "list" ? "flex" : "flex flex-col h-full"
                 }`}
               >
                 {/* Product Image */}
-                <div className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : ""}`}>
+                <div className={`relative ${viewMode === "list" ? "w-48 flex-shrink-0" : "aspect-square"}`}>
                   <img
                     src={product.image}
-                    alt={product.name}
-                    className={`object-cover group-hover:opacity-90 transition-opacity ${
-                      viewMode === "list" ? "w-full h-full" : "w-full h-48"
+                    alt={product.name || "Product"}
+                    className={`object-cover group-hover:opacity-90 transition-opacity w-full h-full ${
+                      viewMode === "list" ? "" : "rounded-t-2xl"
                     }`}
+                    onError={(e) => {
+                      e.target.src = "https://via.placeholder.com/300x300/f3f4f6/9ca3af?text=No+Image";
+                    }}
                   />
                   <button
                     onClick={() => toggleWishlist(product._id)}
-                    className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
+                    className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 shadow-sm ${
                       wishlist.has(product._id) 
-                        ? "bg-red-500 text-white" 
-                        : "bg-white/80 text-gray-600 hover:bg-red-500 hover:text-white"
+                        ? "bg-red-500 text-white scale-110" 
+                        : "bg-white/90 text-gray-600 hover:bg-red-500 hover:text-white hover:scale-110"
                     }`}
                   >
                     <Heart className="w-4 h-4" fill={wishlist.has(product._id) ? "currentColor" : "none"} />
                   </button>
+                  
+                  {/* Discount Badge */}
+                  {product.originalPrice && product.originalPrice > product.price && (
+                    <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                      {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                    </div>
+                  )}
                 </div>
 
                 {/* Product Info */}
-                <div className="p-4 flex-1">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors">
-                    {product.name}
+                <div className="p-4 flex-1 flex flex-col">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                    {product.name || "Product Name"}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {product.description}
-                  </p>
+                  
+                  {product.description && (
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2 flex-grow">
+                      {product.description}
+                    </p>
+                  )}
 
                   {/* Rating */}
                   {product.rating && (
@@ -351,30 +364,36 @@ const Category = () => {
                   )}
 
                   {/* Price and Actions */}
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="text-2xl font-bold text-gray-900">
-                        ₹{product.price.toLocaleString()}
-                      </span>
-                      {product.originalPrice && product.originalPrice > product.price && (
-                        <span className="text-sm text-gray-500 line-through ml-2">
-                          ₹{product.originalPrice.toLocaleString()}
+                  <div className="mt-auto">
+                    <div className="flex justify-between items-center mb-3">
+                      <div>
+                        <span className="text-xl font-bold text-gray-900">
+                          ₹{(product.price || 0).toLocaleString()}
                         </span>
-                      )}
+                        {product.originalPrice && product.originalPrice > product.price && (
+                          <span className="text-sm text-gray-500 line-through ml-2">
+                            ₹{product.originalPrice.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                    
                     <button
                       onClick={() => addToCart(product)}
                       disabled={cartLoading[product._id]}
-                      className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+                      className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] font-medium"
                     >
                       {cartLoading[product._id] ? (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span className="text-sm">Adding...</span>
+                        </>
                       ) : (
-                        <ShoppingCart className="w-4 h-4" />
+                        <>
+                          <ShoppingCart className="w-4 h-4" />
+                          <span className="text-sm">Add to Cart</span>
+                        </>
                       )}
-                      <span className="text-sm font-medium">
-                        {cartLoading[product._id] ? "Adding..." : "Add to Cart"}
-                      </span>
                     </button>
                   </div>
                 </div>
