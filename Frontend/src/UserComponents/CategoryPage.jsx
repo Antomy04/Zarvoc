@@ -2,7 +2,7 @@ import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Category from './Category';
-import './CategoryPage.css';
+// import './CategoryPage.css';
 
 const CategoryPage = () => {
   return (
