@@ -1,4 +1,4 @@
-src/components/Category.jsx
+// src/components/Category.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ShoppingCart, Heart, Star, Filter, Grid, List, Search, ArrowUp } from "lucide-react";
