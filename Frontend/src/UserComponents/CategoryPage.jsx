@@ -9,15 +9,7 @@ const CategoryPage = () => {
     <div className="category-page">
       {/* Header/Navbar */}
       <Header />
-      
-      {/* Main Content - Category Products */}
-      <main className="category-main">
-        <div className="category-container">
-          <Category />
-        </div>
-      </main>
-      
-      {/* Footer */}
+      <Category />
       <Footer />
     </div>
   );
