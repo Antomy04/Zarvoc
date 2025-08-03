@@ -190,7 +190,7 @@ const Category = () => {
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -200,7 +200,7 @@ const Category = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               >
                 <option value="name">Name</option>
                 <option value="price-low">Price: Low to High</option>
@@ -217,14 +217,14 @@ const Category = () => {
                   placeholder="Min"
                   value={priceRange.min === 0 ? '' : priceRange.min}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="number"
                   placeholder="Max"
                   value={priceRange.max === Infinity ? '' : priceRange.max}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) || Infinity }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
