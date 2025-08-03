@@ -6,12 +6,12 @@ import './CategoryPage.css';
 
 const CategoryPage = () => {
   return (
-    <div className="category-page">
+    <>
       {/* Header/Navbar */}
       <Header />
       <Category />
       <Footer />
-    </div>
+    </>
   );
 };
 
