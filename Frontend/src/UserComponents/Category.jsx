@@ -38,6 +38,7 @@ const Category = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [priceRange, setPriceRange] = useState({ min: 0, max: Infinity });
+  const [showFilters, setShowFilters] = useState(false);
 
   const params = new URLSearchParams(location.search);
   const categoryKey = params.get("cat");
@@ -190,17 +191,17 @@ const Category = () => {
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             {/* Sort */}
             <div className="mb-6">
-              <label className="block text-sm bg-white font-medium text-gray-700 mb-2">Sort By</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2 bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               >
                 <option value="name">Name</option>
                 <option value="price-low">Price: Low to High</option>
@@ -217,14 +218,14 @@ const Category = () => {
                   placeholder="Min"
                   value={priceRange.min === 0 ? '' : priceRange.min}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, min: Number(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="number"
                   placeholder="Max"
                   value={priceRange.max === Infinity ? '' : priceRange.max}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, max: Number(e.target.value) || Infinity }))}
-                  className="w-full px-3 py-2 bg-white text-black border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
